@@ -1,0 +1,24 @@
+{
+  "name": "notesapp",
+  "version": "1.0.0",
+  "description": "Note taking App",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andy Bradford",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^2.0.0",
+    "ejs": "^2.5.3",
+    "express-ejs-layouts": "^2.2.0",
+    "express-session": "^1.14.2",
+    "express-validator": "^3.0.0",
+    "fs": "0.0.1-security",
+    "guid": "0.0.12",
+    "jsonfile": "^2.4.0"
+  }
+}

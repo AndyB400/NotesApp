@@ -1,0 +1,34 @@
+<div class="jumbotron text-center">
+	<h1>All Notes</h1>	
+</div>
+
+<% if (success.length > 0) { %>
+    <div class="alert alert-success"><%= success %></div>
+<% } %>
+
+<table class="table table-bordered table-hover table-striped">
+	<thead>
+		<tr>
+			<th>Note</th>
+			<th>Tags</th>
+			<th>Created</th>	
+			<th>Updated</th>
+			<th></th>
+		</tr>
+		</thead>	
+		<tbody>
+			<% for (var note of notes) { %>
+				<tr>
+					<td><%= note.noteBody %></td>
+					<td><%= note.tags %></td>
+					<td><%= note.created %></td>
+					<td><%= note.updated %></td>
+					<td>
+					<a href="/events/<%= note.id %>" class="btn btn-sm btn-primary">View</a>
+                    <a href="/events/<%= note.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="/events/<%= note.id %>/delete" class="btn btn-sm btn-danger">Delete</a>
+					</td>
+				</tr>
+			<% } %>
+		</tbody>
+</table>
