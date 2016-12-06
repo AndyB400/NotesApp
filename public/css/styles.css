@@ -25,3 +25,25 @@ body  {
   background: #222;
   color: #999;
 }
+
+.dates-dropdown{
+  white-space: nowrap;
+  padding:20px;
+  padding-top: 30px;
+}
+
+.expand-td{
+  width: 99%;
+}
+
+.shrink-td{
+  white-space:nowrap
+}
+
+.buttons-td{
+  text-align:right;
+}
+
+.back-button{
+  padding-left:15px
+}

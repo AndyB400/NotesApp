@@ -1,71 +1,115 @@
-const filesUtil		= require('filesUtil'),
-	  dataPath = path.resolve('/', '..') + '\\data';;
+const fileUtils	= require('./fileUtils'),
+	  fs 		= require('fs'),
+	  jsonFile	= require('jsonFile'),
+	  async 	= require('async'),
+	  guid 		= require('guid');
 
 module.exports = {
-	list: list,
-	find: find
+	listNotes: listNotes,
+	saveNote: saveNote,
+	findNote: findNote,
+	deleteNote: deleteNote
 }
 
-function list(callback){
+function listNotes(callback){
 	
-	checkDirectory(dataPath, (err) => {  
+	fileUtils.checkDataDirectory((err) => {  
 		if(err) {
-			console.log(`Unable to access path: ${dataPath}`, err);
-		} 
-		else {
-	    
-			fs.readdir(dataPath, (err, files) => {
-				if (err) 
-			    	console.log(`Unable to read directory: ${dataPath}`);
+			console.log(`Unable to access path: ${fileUtils.dataPath}`, err);
+			
+			if(err.errno === -4058)
+				err = new Error(`Unable to access path: ${fileUtils.dataPath}`);
 
-			    var notes = [];
-			    for (var file of files){
+			return callback(err, null);
+		}
 
-			    	loadNoteFromFileName(path.join(dataPath,file), (err, note) => {
-			    		if(err)
-			    			console.log(`Unable to load file:${file}`, err);
-			    		else
-			    			notes.push(note);
-			    	});
-			    }
+		fs.readdir(fileUtils.dataPath, (err, files) => {
+			if (err) 
+		    	console.log(`Unable to read directory: ${fileUtils.dataPath}`);
 
-		    	callback(err, notes);
-		    });
-	    }
+		    files = files.filter(function(file) { return file.substr(-5) === '.json' && file.substr(0, 5) === 'note_'; })
+
+		    // Loop over each discovered file and map to a notes collection 
+		    async.map(
+			    // collection to iterate
+			    files, 
+
+			    // function to perform on each file
+			    (file, transformedCallback) => {
+			    	loadNoteFromFileName(fileUtils.createFilePathFromFileName(file), (err, note) => {
+			    		transformedCallback(err, note);
+			    	}) 
+		 		}, 
+
+		 		// Final Callback, calls the listNotes callback and returns the newly created notes collection
+		 		(err, notes) => {
+		 			callback(err, notes);
+		 		}
+		 	);
+	    });
     });
 }
 
+/*
+* Save a note object to json file
+* @param note - the note object to save
+* @param callback - The callback that handles the response.
+*/
+function saveNote(note, callback){
+	var fileName = fileUtils.createFilePathFromGuid(note.guid);
+	console.log(`Saving file to: ${fileName}`);
 
-function find(id, callback){
 
-	jsonFile.readFile(dataPath + req.params.id + '.json', (err, note) => {
-		if (err) {
-			res.status(404);
-			res.send('Note not found!');
-		}
-
-	    // Load from json
-
-	    res.render('pages/single', { 
-	      note: note,
-	      success: req.flash('success')
-	    });
+	jsonFile.writeFile(fileName, note, (err) => {
+	  callback(err);
 	});
 }
 
+
 /*
-* Checks if a directory exists, and create it if it doesn't
-* @param directory - the path of the directory to check
+* Delete a note from the file system 
+* @param guid - the guid of the note to be deleted
 */
-function checkDirectory(directory, callback) {  
-  fs.stat(directory, (err, stats) => {
-    //Check if error defined and the error code is "not exists"
-    if (err && err.errno === 34) {
-      //Create the directory, call the callback.
-      fs.mkdir(directory, callback);
-    } else {
-      //just in case there was a different error:
-      callback(err)
-    }
-  });
+function deleteNote(guid, callback) {
+	
+	var fileName = fileUtils.createFilePathFromGuid(guid);
+
+	fs.unlink(fileName, (err) => {
+		callback(err);
+	});
+}
+
+
+/*
+* Loads a note from the file system 
+* @param string identifier - either a guid or a filename
+* @returns - The note object via the callback function
+*/
+function findNote(identifier, callback){
+
+	var fileName = identifier;
+
+	if(guid.isGuid(identifier)){
+		fileName = fileUtils.createFilePathFromGuid(identifier);
+	}
+
+	loadNoteFromFileName(fileName, callback)
+}
+
+/*
+* Loads a note from the file system 
+* @param filename - the filename of the note to be loaded
+* @returns - The note object via the callback function
+*/
+function loadNoteFromFileName(fileName, callback){
+
+	//Read File
+	jsonFile.readFile(fileName, (err, note) => {
+		
+		// Handle invalid guid (no file found)
+		if(err && err.errno === -4058)
+			err = new Error(`The specified note could not be found`);
+
+		callback(err, note);
+	});
 }

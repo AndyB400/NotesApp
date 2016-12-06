@@ -1,15 +1,14 @@
 // create a new express router
 const express      = require('express'),
   router           = express.Router(),
-  mainController   = require('./controllers/main.controller'),
-  notesController = require('./controllers/notes.controller');
+  notesController  = require('./controllers/notes.controller');
 
 // export router
 module.exports = router;
 
 // define routes
 // main routes
-router.get('/', 				mainController.showHome);
+router.get('/', 				notesController.showNotes);
 
 // note routes
 router.get('/notes',       		notesController.showNotes);
@@ -19,11 +18,13 @@ router.get('/notes/create',  	notesController.showCreate);
 router.post('/notes/create', 	notesController.processCreate);
 
 // edit note
-router.get('/notes/:id/edit', 	notesController.showEdit);
-router.post('/notes/:id',     	notesController.processEdit);
+router.get('/notes/:guid/edit', notesController.showEdit);
+router.post('/notes/:guid',     notesController.processEdit);
 
 // delete note
-router.get('/notes/:id/delete', notesController.deleteNote);
+router.get('/notes/:guid/delete', notesController.deleteNote);
 
-// show a single note
-router.get('/notes/:id', 		notesController.showSingle);
+
+router.get(function(req,res){
+    res.render('pages/404notfound');
+});

@@ -27,6 +27,8 @@ app.use(flash());
 // tell express where to look for static assets
 app.use(express.static(__dirname + '\\public'));
 
+
+
 // set ejs as our templating engine
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
@@ -37,6 +39,20 @@ app.use(expressValidator());
 
 // set the routes =============================
 app.use(require('./app/routes'));
+
+// Handle 404
+app.use((req, res) => {
+   res.status(404);
+   res.render('pages/404notfound');
+});
+
+// Handle 500
+app.use((error, req, res, next) => {
+   res.status(500);
+   res.render('pages/500error', { 
+          message: "An error occured in the notes application. "
+        });
+});
 
 // start our server ===========================
 app.listen(port, () => {

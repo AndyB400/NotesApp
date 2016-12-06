@@ -1,3 +1,4 @@
+<script src="./scripts/notes.index.js"></script>
 <div class="jumbotron text-center">
 	<h1>All Notes</h1>	
 </div>
@@ -6,29 +7,79 @@
     <div class="alert alert-success"><%= success %></div>
 <% } %>
 
-<table class="table table-bordered table-hover table-striped">
-	<thead>
-		<tr>
-			<th>Note</th>
-			<th>Tags</th>
-			<th>Created</th>	
-			<th>Updated</th>
-			<th></th>
-		</tr>
-		</thead>	
-		<tbody>
-			<% for (var note of notes) { %>
-				<tr>
-					<td><%= note.noteBody %></td>
-					<td><%= note.tags %></td>
-					<td><%= note.created %></td>
-					<td><%= note.updated %></td>
-					<td>
-					<a href="/events/<%= note.id %>" class="btn btn-sm btn-primary">View</a>
-                    <a href="/events/<%= note.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="/events/<%= note.id %>/delete" class="btn btn-sm btn-danger">Delete</a>
-					</td>
-				</tr>
-			<% } %>
-		</tbody>
-</table>
+
+
+<div class="table-responsive">
+	<table class="table table-hover table-striped table-condensed">
+		<thead>
+			<tr>
+				<th class="expand-td">Note</th>
+				<th class="shrink-td">Tags</th>
+				<th class="shrink-td"></th>
+			</tr>
+			</thead>	
+			<tbody>
+				<% for (var note of notes) { %>
+					 <tr data-href="/notes/<%= note.guid %>/edit">
+						<td class="row-link expand-td">
+							<% if (note.noteBody.length > 50) { %>
+							 	<%=note.noteBody.substr(0,50) %>...
+							 <%}else{%> 
+							 	<%=note.noteBody%>
+							<% } %>
+						</td>
+						<td class="row-link shrink-td">
+							<% if (note.tags.length > 50) { %>
+							 	<%=note.tags.substr(0,50) %>...
+							 <%}else{%> 
+							 	<%=note.tags%>
+							<% } %>						
+						</td>
+						<td class="buttons-td shrink-td">
+	                    	<!-- Caret for displaying extra data -->
+	                    	<div class="dropdown" style="display:inline">
+	                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+	                                ...
+	                                <span class="caret"></span>
+	                            </button>
+	                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+	                                <li role="presentation">
+	                                    <span class="dates-dropdown">
+	                                    	<strong>Created</strong> <%= moment(note.created).format('DD-MMM-YYYY HH:mm') %>
+	                                    </span>
+	                                </li>
+	                                <li role="separator" class="divider"></li>
+	                                <li role="presentation">
+	                                	<span class="dates-dropdown">
+	                                   		<strong>Updated</strong> <%= moment(note.updated).format('DD-MMM-YYYY HH:mm') %>
+	                                   	</span>	
+	                                </li>
+	                            </ul>
+	                        </div>
+
+	                        <a href="#" data-href="/notes/<%= note.guid %>/delete" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete">Delete</a>
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+	</table>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="modalTitle">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalTitle">Delete Note</h4>
+      </div>
+      <div class="modal-body">
+       Are you sure you want to delete this note? Notes are permantly deleted.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a class="btn btn-danger btn-ok">Delete</a>
+      </div>
+    </div>
+  </div>
+</div>
+
