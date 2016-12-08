@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"min",
+				"min-width"
+			],
+			[
+				"btn",
+				"btn-danger"
+			],
+			[
+				"m",
+				"message"
+			],
+			[
 				"file",
 				"fileName"
 			],
@@ -44,13 +56,10 @@
 	"buffers":
 	[
 		{
-			"contents": "const fileUtils\t= require('./fileUtils'),\n\t  fs \t\t= require('fs'),\n\t  jsonFile\t= require('jsonFile'),\n\t  async \t= require('async'),\n\t  guid \t\t= require('guid');\n\nmodule.exports = {\n\tlistNotes: listNotes,\n\tsaveNote: saveNote,\n\tfindNote: findNote,\n\tdeleteNote: deleteNote\n}\n\nfunction listNotes(callback){\n\t\n\tfileUtils.checkDataDirectory((err) => {  \n\t\tif(err) {\n\t\t\tconsole.log(`Unable to access path: ${dataPath}`, err);\n\t\t\tthrow err;\n\t\t}\n\n\t\tfs.readdir(fileUtils.dataPath, (err, files) => {\n\t\t\tif (err) \n\t\t    \tconsole.log(`Unable to read directory: ${dataPath}`);\n\n\t\t    files = files.filter(function(file) { return file.substr(-5) === '.json' && file.substr(0, 5) === 'note_'; })\n\n\t\t    // Loop over each discovered file and map to a notes collection \n\t\t    async.map(\n\t\t\t    // collection to iterate\n\t\t\t    files, \n\n\t\t\t    // function to perform on each file\n\t\t\t    (file, transformedCallback) => {\n\t\t\t    \tloadNoteFromFileName(fileUtils.createFilePathFromFileName(file), (err, note) => {\n\t\t\t    \t\ttransformedCallback(err, note);\n\t\t\t    \t}) \n\t\t \t\t}, \n\n\t\t \t\t// Final Callback, calls the listNotes callback and returns the newly created notes collection\n\t\t \t\t(err, notes) => {\n\t\t \t\t\tcallback(err, notes);\n\t\t \t\t}\n\t\t \t);\n\t    });\n    });\n}\n\n/*\n* Save a note object to json file\n* @param note - the note object to save\n* @param callback - The callback that handles the response.\n*/\nfunction saveNote(note, callback){\n\tvar fileName = fileUtils.createFilePathFromGuid(note.guid);\n\tconsole.log(`Saving file to: ${fileName}`);\n\n\tjsonFile.writeFile(fileName, note, (err) => {\n\t  callback(err);\n\t});\n}\n\n\n/*\n* Delete a note from the file system \n* @param guid - the guid of the note to be deleted\n*/\nfunction deleteNote(guid, callback) {\n\t\n\tvar fileName = fileUtils.createFilePathFromGuid(guid);\n\n\tfs.unlink(fileName, (err) => {\n\t\tcallback(err);\n\t});\n}\n\n\n/*\n* Loads a note from the file system \n* @param string identifier - either a guid or a filename\n* @returns - The note object via the callback function\n*/\nfunction findNote(identifier, callback){\n\n\tvar fileName = identifier;\n\n\tif(guid.isGuid(identifier)){\n\t\tfileName = fileUtils.createFilePathFromGuid(identifier);\n\t}\n\n\tloadNoteFromFileName(fileName, callback)\n}\n\n/*\n* Loads a note from the file system \n* @param filename - the filename of the note to be loaded\n* @returns - The note object via the callback function\n*/\nfunction loadNoteFromFileName(fileName, callback){\n\t//console.log(`Loading file: ${fileName}`);\n\n\t// Ensure File exists first\n\tcheckFileExists(fileName, (err) => {\n\n\t\tif(err != null)\n\t\t\tcallback(err, null);\n\n\t\t//Read File\n\t\tjsonFile.readFile(fileName, (err, note) => {\n\t\t\tif (err)\n\t\t\t\tconsole.log(`Error whilst loading file: ${fileName}`);\n\n\t\t\tcallback(err, note);\n\t\t});\n\t});\n}\n\nfunction checkFileExists(fileName, callback){\n\tfs.access(fileName, (err) => {\n\t\tcallaback(err);\n\t});\n}",
 			"file": "app/services/notes.repository.js",
-			"file_size": 2967,
-			"file_write_time": 131254272113497228,
 			"settings":
 			{
-				"buffer_size": 2845,
+				"buffer_size": 2868,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -59,17 +68,43 @@
 			"file": "app/controllers/notes.controller.js",
 			"settings":
 			{
-				"buffer_size": 3067,
+				"buffer_size": 3646,
 				"encoding": "UTF-8",
 				"line_ending": "Windows",
 				"name": "notes.controller.js"
 			}
 		},
 		{
-			"file": "app/routes.js",
+			"file": ".env",
 			"settings":
 			{
-				"buffer_size": 725,
+				"buffer_size": 43,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/pages/create.ejs",
+			"settings":
+			{
+				"buffer_size": 992,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "public/scripts/notes.index.js",
+			"settings":
+			{
+				"buffer_size": 812,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "views/pages/notes.ejs",
+			"settings":
+			{
+				"buffer_size": 3298,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -78,7 +113,7 @@
 			"file": "views/pages/edit.ejs",
 			"settings":
 			{
-				"buffer_size": 1457,
+				"buffer_size": 1519,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -87,23 +122,16 @@
 			"file": "views/layout.ejs",
 			"settings":
 			{
-				"buffer_size": 976,
+				"buffer_size": 1203,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "views/pages/create.ejs",
+			"file": "public/css/styles.css",
 			"settings":
 			{
-				"buffer_size": 930,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "views/pages/notes.ejs",
-			"settings":
-			{
-				"buffer_size": 1141,
+				"buffer_size": 589,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -112,7 +140,25 @@
 			"file": "app/services/fileUtils.js",
 			"settings":
 			{
-				"buffer_size": 1358,
+				"buffer_size": 1391,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "server.js",
+			"settings":
+			{
+				"buffer_size": 1694,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/routes.js",
+			"settings":
+			{
+				"buffer_size": 723,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -176,28 +222,31 @@
 	[
 		"/D/Learning/Node/NotesApp",
 		"/D/Learning/Node/NotesApp/app",
-		"/D/Learning/Node/NotesApp/app/controllers",
-		"/D/Learning/Node/NotesApp/app/services",
 		"/D/Learning/Node/NotesApp/public",
-		"/D/Learning/Node/NotesApp/public/css",
-		"/D/Learning/Node/NotesApp/scripts",
-		"/D/Learning/Node/NotesApp/views"
+		"/D/Learning/Node/NotesApp/views",
+		"/D/Learning/Node/NotesApp/views/pages"
 	],
 	"file_history":
 	[
-		"/D/Learning/Node/NotesApp/scripts/edit.js",
-		"/D/Learning/Node/NotesApp/app/routes.js",
 		"/D/Learning/Node/NotesApp/.env",
+		"/D/Learning/Node/NotesApp/views/pages/404notfound.ejs",
+		"/D/Learning/Node/NotesApp/views/layout.ejs",
+		"/D/Learning/Node/NotesApp/app/services/fileUtils.js",
+		"/D/Learning/Node/NotesApp/scripts/notes.index.js",
+		"/D/Learning/Node/NotesApp/public/scripts/notes.index.js",
+		"/D/Learning/Node/NotesApp/views/pages/edit.ejs",
+		"/D/Learning/Node/NotesApp/app/routes.js",
+		"/D/Learning/Node/NotesApp/server.js",
+		"/D/Learning/Node/NotesApp/views/pages/500error.ejs",
+		"/D/Learning/Node/NotesApp/node_modules/validator/validator.js",
+		"/D/Learning/Node/NotesApp/node_modules/connect-flash/lib/flash.js",
+		"/D/Learning/Node/NotesApp/scripts/edit.js",
 		"/D/Learning/Node/NotesApp/public/css/styles.css",
 		"/D/Learning/Node/NotesApp/app/controllers/main.controller.js",
-		"/D/Learning/Node/NotesApp/views/layout.ejs",
-		"/D/Learning/Node/NotesApp/server.js",
 		"/D/Learning/Node/NotesApp/views/pages/single.ejs",
 		"/D/Learning/Node/NotesApp/views/pages/notes.ejs",
 		"/D/Learning/Node/NotesApp/views/pages/home.ejs",
-		"/D/Learning/Node/NotesApp/views/pages/edit.ejs",
 		"/D/Learning/Node/NotesApp/views/pages/create.ejs",
-		"/D/Learning/Node/NotesApp/app/services/fileUtils.js",
 		"/D/Learning/Node/NotesApp/node_modules/guid/guid.js",
 		"/D/Learning/Node/NotesApp/.env.example",
 		"/D/Learning/Node/OlympicEvents/public/css/styles.css",
@@ -222,7 +271,7 @@
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 23.0
 	},
 	"find_in_files":
 	{
@@ -236,6 +285,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"pages/er",
 			"updateNo",
 			"list(",
 			"find",
@@ -266,7 +316,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 10,
 			"sheets":
 			[
 				{
@@ -275,72 +325,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2845,
+						"buffer_size": 2868,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2799,
-								2799
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 994.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "app/controllers/notes.controller.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3067,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1519,
-								1519
-							]
-						],
-						"settings":
-						{
-							"auto_name": "notes.controller.js",
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 424.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "app/routes.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 725,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								192,
-								192
+								849,
+								849
 							]
 						],
 						"settings":
@@ -351,24 +344,200 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "views/pages/edit.ejs",
+					"buffer": 1,
+					"file": "app/controllers/notes.controller.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1457,
+						"buffer_size": 3646,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1093,
-								1093
+								1713,
+								1718
+							]
+						],
+						"settings":
+						{
+							"auto_name": "notes.controller.js",
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 462.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": ".env",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 43,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								42,
+								42
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "views/pages/create.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 992,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								928,
+								928
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "public/scripts/notes.index.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 812,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								802,
+								802
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "views/pages/notes.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3298,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								553,
+								553
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "views/pages/edit.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1519,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1455,
+								1436
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "views/layout.ejs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1203,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1049,
+								1049
 							]
 						],
 						"settings":
@@ -385,109 +554,109 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "views/layout.ejs",
+					"buffer": 8,
+					"file": "public/css/styles.css",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 976,
+						"buffer_size": 589,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								851,
-								851
+								334,
+								334
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "views/pages/create.ejs",
+					"buffer": 9,
+					"file": "app/services/fileUtils.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 930,
+						"buffer_size": 1391,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								427,
-								752
+								1222,
+								1222
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "views/pages/notes.ejs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1141,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1121,
-								1121
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "app/services/fileUtils.js",
+					"buffer": 10,
+					"file": "server.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1358,
+						"buffer_size": 1694,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1094,
-								1094
+								83,
+								83
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "app/routes.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 723,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								30,
+								30
 							]
 						],
 						"settings":
@@ -498,7 +667,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -543,7 +712,7 @@
 	"project": "package.sublime-project",
 	"replace":
 	{
-		"height": 62.0
+		"height": 42.0
 	},
 	"save_all_on_build": true,
 	"select_file":

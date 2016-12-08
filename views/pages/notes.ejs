@@ -7,8 +7,6 @@
     <div class="alert alert-success"><%= success %></div>
 <% } %>
 
-
-
 <div class="table-responsive">
 	<table class="table table-hover table-striped table-condensed">
 		<thead>
@@ -19,47 +17,58 @@
 			</tr>
 			</thead>	
 			<tbody>
-				<% for (var note of notes) { %>
-					 <tr data-href="/notes/<%= note.guid %>/edit">
-						<td class="row-link expand-td">
-							<% if (note.noteBody.length > 50) { %>
-							 	<%=note.noteBody.substr(0,50) %>...
-							 <%}else{%> 
-							 	<%=note.noteBody%>
-							<% } %>
-						</td>
-						<td class="row-link shrink-td">
-							<% if (note.tags.length > 50) { %>
-							 	<%=note.tags.substr(0,50) %>...
-							 <%}else{%> 
-							 	<%=note.tags%>
-							<% } %>						
-						</td>
-						<td class="buttons-td shrink-td">
-	                    	<!-- Caret for displaying extra data -->
-	                    	<div class="dropdown" style="display:inline">
-	                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
-	                                ...
-	                                <span class="caret"></span>
-	                            </button>
-	                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
-	                                <li role="presentation">
-	                                    <span class="dates-dropdown">
-	                                    	<strong>Created</strong> <%= moment(note.created).format('DD-MMM-YYYY HH:mm') %>
-	                                    </span>
-	                                </li>
-	                                <li role="separator" class="divider"></li>
-	                                <li role="presentation">
-	                                	<span class="dates-dropdown">
-	                                   		<strong>Updated</strong> <%= moment(note.updated).format('DD-MMM-YYYY HH:mm') %>
-	                                   	</span>	
-	                                </li>
-	                            </ul>
-	                        </div>
+				<% if(notes.length > 0){ %>
+					<% for (var note of notes) { %>
+						 <tr data-href="/notes/<%= note.guid %>/edit">
+							<td class="row-link expand-td">
+								<% if (note.noteBody.length > 50) { %>
+								 	<%=note.noteBody.substr(0,50) %>...
+								 <%}else{%> 
+								 	<%=note.noteBody%>
+								<% } %>
+							</td>
+							<td class="row-link shrink-td">
+								<% if (note.tags.length > 50) { %>
+								 	<%=note.tags.substr(0,50) %>...
+								 <%}else{%> 
+								 	<%=note.tags%>
+								<% } %>						
+							</td>
+							<td class="buttons-td shrink-td">
+		                    	<!-- Caret for displaying extra data -->
+		                    	<div class="dropdown" style="display:inline">
+		                            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="true">
+		                                ...
+		                                <span class="caret"></span>
+		                            </button>
+		                            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+		                                <li role="presentation">
+		                                    <span class="dates-dropdown">
+		                                    	<strong>Created</strong> <%= moment(note.created).format('DD-MMM-YYYY HH:mm') %>
+		                                    </span>
+		                                </li>
+		                                <li role="separator" class="divider"></li>
+		                                <li role="presentation">
+		                                	<span class="dates-dropdown">
+		                                   		<strong>Updated</strong> <%= moment(note.updated).format('DD-MMM-YYYY HH:mm') %>
+		                                   	</span>	
+		                                </li>
+		                            </ul>
+		                        </div>
 
-	                        <a href="#" data-href="/notes/<%= note.guid %>/delete" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete">Delete</a>
+		                        <a href="#" data-href="/notes/<%= note.guid %>/delete" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#confirm-delete">Delete</a>
+							</td>
+						</tr>
+					<% } %>
+				<% } else { %>	
+					<!-- No notes -->
+					<tr>	
+						<td colspan="3">
+							<div class="alert alert-success text-center">
+								You don't have any notes yet, <a href="notes/create">click here to get started</a>
+							</div>
 						</td>
-					</tr>
+					</tr>	
 				<% } %>
 			</tbody>
 	</table>

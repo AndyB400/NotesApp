@@ -8,7 +8,8 @@ module.exports = {
   processCreate: processCreate,
   showEdit: showEdit,
   processEdit: processEdit,
-  deleteNote: deleteNote
+  deleteNote: deleteNote,
+  //seedNotes: seedNotes // Only for testing
 }
 
 /*
@@ -40,7 +41,8 @@ function showNotes(req, res) {
  */
 function showCreate(req, res) {
 	res.render('pages/create', {
-		errors: req.flash('errors')
+		errors: req.flash('errors'),
+		tags: req.flash('tags')
 	});
 }
 
@@ -55,19 +57,14 @@ function processCreate(req, res) {
 	const errors = req.validationErrors();
 	if (errors) {
 		req.flash('errors', errors.map(err => err.msg));
+		req.flash('tags', req.body.tags);
 		return res.redirect('/notes/create');
 	}
 
 	// create a new note
-	var note = {
-		guid: guid.raw(),
-		noteBody: req.body.noteBody,
-		tags: req.body.tags,
-		created: new Date(),
-		updated: new Date()
-	};
+	var note = createNote(req.body.noteBody, req.body.tags);
 
-	notesRepo.saveNote(note, (err) => {  
+	notesRepo.saveNote(note, err => {  
 		if(err) {
 			// TODO: log error to error logging system
 			
@@ -77,11 +74,26 @@ function processCreate(req, res) {
 		}
 
 		// set a successful flash message
-	    req.flash('success', 'Successfuly created event!');
+	    req.flash('success', 'Successfuly created note!');
 
-	    // redirect to the newly created event
+	    // redirect to the newly created note
 	    res.redirect('/notes');
 	});
+}
+
+/*
+* Creates a note oject and setups up the Guid and initial dates
+* @param noteBody - the body of the new note
+* @param tags - Any tags of the new note
+*/
+function createNote(noteBody, tags){
+	return {
+		guid: guid.raw(),
+		noteBody: noteBody,
+		tags: tags,
+		created: new Date(),
+		updated: new Date()
+	};
 }
 
 /**
@@ -129,12 +141,10 @@ function processEdit(req, res) {
 		    	message: err.message
 		    });
 		} else {
-			// updating that note
-			note.noteBody        = req.body.noteBody;
-			note.tags 			 = req.body.tags;
-			note.updated 		 = new Date();
+			// update the note details
+			note = updateNote(req.body.noteBody, req.body.tags);
 
-			notesRepo.saveNote(note, (err) => {
+			notesRepo.saveNote(note, err => {
 				if(err) {
 					// TODO: log error to error logging system
 					
@@ -152,11 +162,24 @@ function processEdit(req, res) {
 	});
 }
 
+/*
+* Updates a note oject and sets the updated date
+* @param noteBody - the body of the updated note
+* @param tags - Any tags of the updated note
+*/
+function updateNote(note, noteBody, tags){
+	note.noteBody = noteBody;
+	note.tags 	  = tags;
+	note.updated  = new Date();
+	return note;
+}
+
+
 /**
  * Delete a note
  */
 function deleteNote(req, res) {
-	notesRepo.deleteNote(req.params.guid, (err) => {
+	notesRepo.deleteNote(req.params.guid, err => {
 		if(err) {
 			// TODO: log error to error logging system
 			
@@ -170,4 +193,25 @@ function deleteNote(req, res) {
 		req.flash('success', 'Note deleted!');
 		res.redirect('/notes');
 	});
+}
+
+
+/**
+ * Seeds a collection of notes for testing
+ */
+function seedNotes(req, res) {
+	
+	for(var i=0;i<10000;i++){
+		let randonNote = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+		let randonTag = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+
+		let note = createNote(randonNote, randonTag);
+
+		notesRepo.saveNote(note, err => {});
+	}
+
+	// set flash data
+	// redirect back to the notes page
+	req.flash('success', 'Notes seeded!');
+	res.redirect('/notes');
 }
